@@ -21,8 +21,8 @@ Tag.blueprint do
 end
 
 # these need to exist for stories to use them
-Tag.make!(:tag => "tag1")
-Tag.make!(:tag => "tag2")
+Tag.make!(tag: "tag1")
+Tag.make!(tag: "tag2")
 
 Story.blueprint do
   user_id { User.make!.id }

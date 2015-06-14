@@ -39,9 +39,9 @@ class Pushover
 
       s = Sponge.new
       s.fetch("https://api.pushover.net/1/messages.json", :post, {
-        :token => @@API_KEY,
-        :user => user,
-        :device => device
+        token: @@API_KEY,
+        user: user,
+        device: device
       }.merge(params))
     rescue => e
       Rails.logger.error "error sending to pushover: #{e.inspect}"

@@ -7,7 +7,7 @@ class Search
   attr_accessor :q, :what, :order
   attr_accessor :results, :page, :total_results, :per_page
 
-  validates_length_of :q, :minimum => 2
+  validates_length_of :q, minimum: 2
 
   def initialize
     @q = ""
@@ -36,10 +36,10 @@ class Search
 
   def search_for_user!(user)
     opts = {
-      :ranker   => :bm25,
-      :page     => @page,
-      :per_page => @per_page,
-      :include  => [ :story, :user ],
+      ranker: :bm25,
+      page: @page,
+      per_page: @per_page,
+      include: [ :story, :user ],
     }
 
     if order == "newest"

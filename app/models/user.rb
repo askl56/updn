@@ -3,34 +3,34 @@ class User < ActiveRecord::Base
     -> { includes :user }
   has_many :comments
   has_many :sent_messages,
-    :class_name => "Message",
-    :foreign_key => "author_user_id"
+    class_name: "Message",
+    foreign_key: "author_user_id"
   has_many :received_messages,
-    :class_name => "Message",
-    :foreign_key => "recipient_user_id"
+    class_name: "Message",
+    foreign_key: "recipient_user_id"
   has_many :tag_filters
   has_many :tag_filter_tags,
-    :class_name => "Tag",
-    :through => :tag_filters,
-    :source => :tag,
-    :dependent => :delete_all
+    class_name: "Tag",
+    through: :tag_filters,
+    source: :tag,
+    dependent: :delete_all
   belongs_to :invited_by_user,
-    :class_name => "User"
+    class_name: "User"
   belongs_to :banned_by_user,
-    :class_name => "User"
+    class_name: "User"
   has_many :invitations
   has_many :transactions
 
   has_secure_password
 
-  validates :email, :format => { :with => /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/ },
-    :uniqueness => { :case_sensitive => false }
+  validates :email, format: { with: /\A[^@ ]+@[^@ ]+\.[^@ ]+\Z/ },
+    uniqueness: { case_sensitive: false }
 
-  validates :password, :presence => true, :on => :create
+  validates :password, presence: true, on: :create
 
   validates :username,
-    :format => { :with => /\A[A-Za-z0-9][A-Za-z0-9_-]{0,24}\Z/ },
-    :uniqueness => { :case_sensitive => false }
+    format: { with: /\A[A-Za-z0-9][A-Za-z0-9_-]{0,24}\Z/ },
+    uniqueness: { case_sensitive: false }
 
   validates_each :username do |record,attr,value|
     if BANNED_USERNAMES.include?(value.to_s.downcase)
@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
 
   before_save :check_session_token
   after_save :create_deposit
-  before_validation :on => :create do
+  before_validation on: :create do
     self.create_rss_token
     self.create_mailing_list_token
   end
@@ -66,7 +66,7 @@ class User < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    h = super(:only => [
+    h = super(only: [
       :username,
       :created_at,
       :is_admin,
@@ -197,14 +197,14 @@ class User < ActiveRecord::Base
   def linkified_about
     # most users are probably mentioning "@username" to mean a twitter url, not
     # a link to a profile on this site
-    Markdowner.to_html(self.about, { :disable_profile_links => true })
+    Markdowner.to_html(self.about, { disable_profile_links: true })
   end
 
   def most_common_story_tag
     Tag.active.joins(
       :stories
     ).where(
-      :stories => { :user_id => self.id }
+      stories: { user_id: self.id }
     ).group(
       Tag.arel_table[:id]
     ).order(
@@ -215,7 +215,7 @@ class User < ActiveRecord::Base
   def pushover!(params)
     if self.pushover_user_key.present?
       Pushover.push(self.pushover_user_key, self.pushover_device,
-        params.merge({ :sound => self.pushover_sound.to_s }))
+        params.merge({ sound: self.pushover_sound.to_s }))
     end
   end
 
@@ -240,11 +240,11 @@ class User < ActiveRecord::Base
   end
 
   def undeleted_received_messages
-    received_messages.where(:deleted_by_recipient => false)
+    received_messages.where(deleted_by_recipient: false)
   end
 
   def undeleted_sent_messages
-    sent_messages.where(:deleted_by_author => false)
+    sent_messages.where(deleted_by_author: false)
   end
 
   def unread_message_count

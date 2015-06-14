@@ -1,6 +1,6 @@
 class Action < ActiveRecord::Base
-  belongs_to :from, :class_name => 'User'
-  belongs_to :to, :class_name => 'User'
+  belongs_to :from, class_name: 'User'
+  belongs_to :to, class_name: 'User'
   belongs_to :story
   belongs_to :comment
   belongs_to :vote

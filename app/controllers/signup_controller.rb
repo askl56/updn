@@ -1,5 +1,5 @@
 class SignupController < ApplicationController
-  before_filter :require_logged_in_user, :only => :invite
+  before_filter :require_logged_in_user, only: :invite
 
   def index
     if @user
@@ -16,7 +16,7 @@ class SignupController < ApplicationController
       return redirect_to "/"
     end
 
-    if !(@invitation = Invitation.where(:code => params[:invitation_code].to_s).first)
+    if !(@invitation = Invitation.where(code: params[:invitation_code].to_s).first)
       flash[:error] = "Invalid or expired invitation"
       return redirect_to "/signup"
     end
@@ -26,11 +26,11 @@ class SignupController < ApplicationController
     @new_user = User.new
     @new_user.email = @invitation.email
 
-    render :action => "invited"
+    render action: "invited"
   end
 
   def signup
-    if !(@invitation = Invitation.where(:code => params[:invitation_code].to_s).first)
+    if !(@invitation = Invitation.where(code: params[:invitation_code].to_s).first)
       flash[:error] = "Invalid or expired invitation."
       return redirect_to "/signup"
     end
@@ -50,7 +50,7 @@ class SignupController < ApplicationController
 
       return redirect_to "/signup/invite"
     else
-      render :action => "invited"
+      render action: "invited"
     end
   end
 
@@ -78,7 +78,7 @@ class SignupController < ApplicationController
 
       return redirect_to "/"
     else
-      render :action => "register"
+      render action: "register"
     end
   end
 

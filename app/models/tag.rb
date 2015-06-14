@@ -1,16 +1,16 @@
 class Tag < ActiveRecord::Base
   has_many :taggings,
-    :dependent => :delete_all
+    dependent: :delete_all
   has_many :stories,
-    :through => :taggings
+    through: :taggings
 
   attr_accessor :filtered_count, :stories_count
 
   scope :accessible_to, ->(user) do
-    user && user.is_moderator?? all : where(:privileged => false)
+    user && user.is_moderator?? all : where(privileged: false)
   end
 
-  scope :active, -> { where(:inactive => false) }
+  scope :active, -> { where(inactive: false) }
 
   def to_param
     self.tag
@@ -47,6 +47,6 @@ class Tag < ActiveRecord::Base
   end
 
   def filtered_count
-    @filtered_count ||= TagFilter.where(:tag_id => self.id).count
+    @filtered_count ||= TagFilter.where(tag_id: self.id).count
   end
 end

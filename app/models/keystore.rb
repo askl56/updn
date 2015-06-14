@@ -4,11 +4,11 @@ class Keystore < ActiveRecord::Base
   validates_presence_of :key
 
   def self.get(key)
-    self.where(:key => key).first
+    self.where(key: key).first
   end
 
   def self.value_for(key)
-    self.where(:key => key).first.try(:value)
+    self.where(key: key).first.try(:value)
   end
 
   def self.put(key, value)
@@ -58,7 +58,7 @@ class Keystore < ActiveRecord::Base
 
   def self.find_or_create_key_for_update(key, init = nil)
     loop do
-      kv = self.lock(true).where(:key => key).first
+      kv = self.lock(true).where(key: key).first
       return kv if kv
 
       begin

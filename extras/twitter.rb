@@ -14,7 +14,7 @@ class Twitter
 
   def self.oauth_consumer
     OAuth::Consumer.new(self.CONSUMER_KEY, self.CONSUMER_SECRET,
-      { :site => "https://api.twitter.com" })
+      { site: "https://api.twitter.com" })
   end
 
   def self.oauth_request(req, method = :get, post_data = nil)

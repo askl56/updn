@@ -1,20 +1,20 @@
 class Comment < ActiveRecord::Base
   belongs_to :user
   belongs_to :story,
-    :inverse_of => :comments
+    inverse_of: :comments
   has_many :votes,
-    :dependent => :delete_all
+    dependent: :delete_all
   belongs_to :parent_comment,
-    :class_name => "Comment"
+    class_name: "Comment"
   has_one :moderation,
-    :class_name => "Moderation"
+    class_name: "Moderation"
   has_many :actions
   has_many :tips, -> {where('anonymous is not null').order('id desc')}, 
     class_name: 'Action' 
 
   attr_accessor :current_vote, :previewing, :indent_level, :highlighted
 
-  before_validation :on => :create do
+  before_validation on: :create do
     self.assign_short_id_and_upvote
     self.assign_initial_confidence
     self.assign_thread_id
@@ -97,7 +97,7 @@ class Comment < ActiveRecord::Base
 
     Comment.all.each do |c|
       c.markeddown_comment = c.generated_markeddown_comment
-      c.save(:validate => false)
+      c.save(validate: false)
     end
 
     Comment.record_timestamps = true
@@ -106,7 +106,7 @@ class Comment < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    h = super(:only => [
+    h = super(only: [
       :short_id,
       :created_at,
       :updated_at,
@@ -182,7 +182,7 @@ class Comment < ActiveRecord::Base
       m.save
     end
 
-    self.save(:validate => false)
+    self.save(validate: false)
     Comment.record_timestamps = true
 
     self.story.update_comments_count!
@@ -190,7 +190,7 @@ class Comment < ActiveRecord::Base
 
   def deliver_mention_notifications
     self.plaintext_comment.scan(/\B\@([\w\-]+)/).flatten.uniq.each do |mention|
-      if u = User.where(:username => mention).first
+      if u = User.where(username: mention).first
         if u.id == self.user.id
           next
         end
@@ -205,11 +205,11 @@ class Comment < ActiveRecord::Base
 
         if u.pushover_mentions?
           u.pushover!({
-            :title => "#{Rails.application.name} mention by " <<
+            title: "#{Rails.application.name} mention by " <<
               "#{self.user.username} on #{self.story.title}",
-            :message => self.plaintext_comment,
-            :url => self.url,
-            :url_title => "Reply to #{self.user.username}",
+            message: self.plaintext_comment,
+            url: self.url,
+            url_title: "Reply to #{self.user.username}",
           })
         end
       end
@@ -229,11 +229,11 @@ class Comment < ActiveRecord::Base
 
       if u.pushover_replies?
         u.pushover!({
-          :title => "#{Rails.application.name} reply from " <<
+          title: "#{Rails.application.name} reply from " <<
             "#{self.user.username} on #{self.story.title}",
-          :message => self.plaintext_comment,
-          :url => self.url,
-          :url_title => "Reply to #{self.user.username}",
+          message: self.plaintext_comment,
+          url: self.url,
+          url_title: "Reply to #{self.user.username}",
         })
       end
     end
@@ -359,7 +359,7 @@ class Comment < ActiveRecord::Base
 
   def vote_summary
     r_counts = {}
-    Vote.where(:comment_id => self.id).each do |v|
+    Vote.where(comment_id: self.id).each do |v|
       r_counts[v.reason.to_s] ||= 0
       r_counts[v.reason.to_s] += v.vote
     end
@@ -387,7 +387,7 @@ class Comment < ActiveRecord::Base
       end
     end
 
-    self.save(:validate => false)
+    self.save(validate: false)
     Comment.record_timestamps = true
 
     self.story.update_comments_count!

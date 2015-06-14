@@ -1,5 +1,5 @@
 class BanNotification < ActionMailer::Base
-  default :from => "#{Rails.application.name} " <<
+  default from: "#{Rails.application.name} " <<
     "<nobody@#{Rails.application.domain}>"
 
   def notify(user, banner, reason)
@@ -7,9 +7,9 @@ class BanNotification < ActionMailer::Base
     @reason = reason
 
     mail(
-      :from => "#{@banner.username} <#{@banner.email}>",
-      :to => user.email,
-      :subject => "[#{Rails.application.name}] You have been banned"
+      from: "#{@banner.username} <#{@banner.email}>",
+      to: user.email,
+      subject: "[#{Rails.application.name}] You have been banned"
     )
   end
 end

@@ -1,17 +1,17 @@
 class InvitationsController < ApplicationController
   before_filter :require_logged_in_user,
-    :except => [ :build, :create_by_request, :confirm_email ]
+    except: [ :build, :create_by_request, :confirm_email ]
 
   def build
     @invitation_request = InvitationRequest.new
   end
 
   def index
-    @invitation_requests = InvitationRequest.where(:is_verified => true)
+    @invitation_requests = InvitationRequest.where(is_verified: true)
   end
 
   def confirm_email
-    if !(ir = InvitationRequest.where(:code => params[:code].to_s).first)
+    if !(ir = InvitationRequest.where(code: params[:code].to_s).first)
       flash[:error] = "Invalid or expired invitation request"
       return redirect_to "/invitations/request"
     end
@@ -58,12 +58,12 @@ class InvitationsController < ApplicationController
         params[:invitation_request][:email].to_s << "."
       return redirect_to "/invitations/request"
     else
-      render :action => :build
+      render action: :build
     end
   end
 
   def send_for_request
-    if !(ir = InvitationRequest.where(:code => params[:code].to_s).first)
+    if !(ir = InvitationRequest.where(code: params[:code].to_s).first)
       flash[:error] = "Invalid or expired invitation request"
       return redirect_to "/invitations"
     end
@@ -86,7 +86,7 @@ class InvitationsController < ApplicationController
       return redirect_to "/invitations"
     end
 
-    if !(ir = InvitationRequest.where(:code => params[:code].to_s).first)
+    if !(ir = InvitationRequest.where(code: params[:code].to_s).first)
       flash[:error] = "Invalid or expired invitation request"
       return redirect_to "/invitations"
     end

@@ -18,7 +18,7 @@ class String
       end
 
       str = self.dup.force_encoding("binary").encode("utf-8",
-        :invalid => :replace, :undef => :replace, :replace => "?")
+        invalid: :replace, undef: :replace, replace: "?")
 
       if !str.valid_encoding? || str.encoding.to_s != "UTF-8"
         raise Encoding::UndefinedConversionError
@@ -27,7 +27,7 @@ class String
     rescue Encoding::UndefinedConversionError => e
       str = self.chars.map{|c|
         begin
-          c.encode("UTF-8", :invalid => :replace, :undef => :replace)
+          c.encode("UTF-8", invalid: :replace, undef: :replace)
         rescue
           "?".encode("UTF-8")
         end

@@ -8,7 +8,7 @@ class Invitation < ActiveRecord::Base
   end
 
   before_validation :create_code,
-    :on => :create
+    on: :create
 
   def create_code
     (1...10).each do |tries|
@@ -17,7 +17,7 @@ class Invitation < ActiveRecord::Base
       end
 
       self.code = Utils.random_str(15)
-      unless Invitation.exists?(:code => self.code)
+      unless Invitation.exists?(code: self.code)
         break
       end
     end

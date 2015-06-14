@@ -1,23 +1,23 @@
 class Story < ActiveRecord::Base
   belongs_to :user
   belongs_to :merged_into_story,
-    :class_name => "Story",
-    :foreign_key => "merged_story_id"
+    class_name: "Story",
+    foreign_key: "merged_story_id"
   has_many :merged_stories,
-    :class_name => "Story",
-    :foreign_key => "merged_story_id"
+    class_name: "Story",
+    foreign_key: "merged_story_id"
   has_many :taggings,
-    :autosave => true
+    autosave: true
   has_many :comments,
-    :inverse_of => :story
-  has_many :tags, :through => :taggings
+    inverse_of: :story
+  has_many :tags, through: :taggings
   has_many :tips, -> {where('anonymous is not null').order('id desc')}, 
     class_name: 'Action' 
 
-  scope :unmerged, -> { where(:merged_story_id => nil) }
+  scope :unmerged, -> { where(merged_story_id: nil) }
 
-  validates_length_of :title, :in => 3..150
-  validates_length_of :description, :maximum => (64 * 1024)
+  validates_length_of :title, in: 3..150
+  validates_length_of :description, maximum: (64 * 1024)
   validates_presence_of :user_id
 
   DOWNVOTABLE_DAYS = 14
@@ -33,7 +33,7 @@ class Story < ActiveRecord::Base
   attr_accessor :editor, :moderation_reason, :merge_story_short_id
 
   before_validation :assign_short_id_and_upvote,
-    :on => :create
+    on: :create
   before_save :log_moderation
   after_create :mark_submitter, :record_initial_upvote, :create_action
   after_save :update_merged_into_story_comments
@@ -85,7 +85,7 @@ class Story < ActiveRecord::Base
     end
     urls = urls2.clone
 
-    if s = Story.where(:url => urls, :is_expired => false).order("id DESC").first
+    if s = Story.where(url: urls, is_expired: false).order("id DESC").first
       return s
     end
 
@@ -99,7 +99,7 @@ class Story < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    h = super(:only => [
+    h = super(only: [
       :short_id,
       :created_at,
       :title,
@@ -221,7 +221,7 @@ class Story < ActiveRecord::Base
   end
 
   def generated_markeddown_description
-    Markdowner.to_html(self.description, { :allow_images => true })
+    Markdowner.to_html(self.description, { allow_images: true })
   end
 
   def give_upvote_or_downvote_and_recalculate_hotness!(upvote, downvote)
@@ -235,8 +235,8 @@ class Story < ActiveRecord::Base
   end
 
   def hider_count
-    @hider_count ||= Vote.where(:story_id => self.id, :comment_id => nil,
-      :vote => 0).count
+    @hider_count ||= Vote.where(story_id: self.id, comment_id: nil,
+      vote: 0).count
   end
 
   def is_downvotable?
@@ -330,13 +330,13 @@ class Story < ActiveRecord::Base
 
   def merged_comments
     # TODO: make this a normal has_many?
-    Comment.where(:story_id => Story.select(:id).
-      where(:merged_story_id => self.id) + [ self.id ])
+    Comment.where(story_id: Story.select(:id).
+      where(merged_story_id: self.id) + [ self.id ])
   end
 
   def merge_story_short_id=(sid)
     self.merged_story_id = sid.present??
-      Story.where(:short_id => sid).first.id : nil
+      Story.where(short_id: sid).first.id : nil
   end
 
   def recalculate_hotness!
@@ -382,8 +382,8 @@ class Story < ActiveRecord::Base
     end
 
     new_tag_names_a.each do |tag_name|
-      if tag_name.to_s != "" && !self.tags.exists?(:tag => tag_name)
-        if t = Tag.active.where(:tag => tag_name).first
+      if tag_name.to_s != "" && !self.tags.exists?(tag: tag_name)
+        if t = Tag.active.where(tag: tag_name).first
           # we can't lookup whether the user is allowed to use this tag yet
           # because we aren't assured to have a user_id by now; we'll do it in
           # the validation with check_tags
@@ -457,7 +457,7 @@ class Story < ActiveRecord::Base
   def vote_summary_for(user)
     r_counts = {}
     r_whos = {}
-    Vote.where(:story_id => self.id, :comment_id => nil).where("vote != 0").each do |v|
+    Vote.where(story_id: self.id, comment_id: nil).where("vote != 0").each do |v|
       r_counts[v.reason.to_s] ||= 0
       r_counts[v.reason.to_s] += v.vote
       if user && user.is_moderator?

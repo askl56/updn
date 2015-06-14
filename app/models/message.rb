@@ -1,21 +1,21 @@
 class Message < ActiveRecord::Base
   belongs_to :recipient,
-    :class_name => "User",
-    :foreign_key => "recipient_user_id"
+    class_name: "User",
+    foreign_key: "recipient_user_id"
   belongs_to :author,
-    :class_name => "User",
-    :foreign_key => "author_user_id"
+    class_name: "User",
+    foreign_key: "author_user_id"
 
   validates_presence_of :recipient
   validates_presence_of :author
 
   attr_accessor :recipient_username
 
-  validates_length_of :subject, :in => 1..150
-  validates_length_of :body, :maximum => (64 * 1024)
+  validates_length_of :subject, in: 1..150
+  validates_length_of :body, maximum: (64 * 1024)
 
   before_validation :assign_short_id,
-    :on => :create
+    on: :create
   after_create :deliver_email_notifications
   after_save :update_unread_counts
   after_save :check_for_both_deleted
@@ -45,11 +45,11 @@ class Message < ActiveRecord::Base
 
     if self.recipient.pushover_messages?
       self.recipient.pushover!({
-        :title => "#{Rails.application.name} message from " <<
+        title: "#{Rails.application.name} message from " <<
           "#{self.author.username}: #{self.subject}",
-        :message => self.plaintext_body,
-        :url => self.url,
-        :url_title => "Reply to #{self.author.username}",
+        message: self.plaintext_body,
+        url: self.url,
+        url_title: "Reply to #{self.author.username}",
       })
     end
   end
@@ -57,7 +57,7 @@ class Message < ActiveRecord::Base
   def recipient_username=(username)
     self.recipient_user_id = nil
 
-    if u = User.where(:username => username).first
+    if u = User.where(username: username).first
       self.recipient_user_id = u.id
       @recipient_username = username
     else

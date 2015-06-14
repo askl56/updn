@@ -1,6 +1,6 @@
 class MessagesController < ApplicationController
   before_filter :require_logged_in_user
-  before_filter :find_message, :only => [ :show, :destroy, :keep_as_new ]
+  before_filter :find_message, only: [ :show, :destroy, :keep_as_new ]
 
   def index
     @cur_url = "/messages"
@@ -25,7 +25,7 @@ class MessagesController < ApplicationController
 
     @new_message = Message.new
 
-    render :action => "index"
+    render action: "index"
   end
 
   def create
@@ -43,7 +43,7 @@ class MessagesController < ApplicationController
         @new_message.recipient.username.to_s << "."
       return redirect_to "/messages"
     else
-      render :action => "index"
+      render action: "index"
     end
   end
 
@@ -92,7 +92,7 @@ class MessagesController < ApplicationController
 
     params.each do |k,v|
       if v.to_s == "1" && m = k.match(/^delete_(.+)$/)
-        if (message = Message.where(:short_id => m[1]).first)
+        if (message = Message.where(short_id: m[1]).first)
           if message.author_user_id == @user.id
             message.deleted_by_author = true
           elsif message.recipient_user_id == @user.id
@@ -129,7 +129,7 @@ private
   end
 
   def find_message
-    if @message = Message.where(:short_id => params[:message_id] ||
+    if @message = Message.where(short_id: params[:message_id] ||
     params[:id]).first
       if (@message.author_user_id == @user.id ||
       @message.recipient_user_id == @user.id)

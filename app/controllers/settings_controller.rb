@@ -27,7 +27,7 @@ class SettingsController < ApplicationController
       @user = @edit_user
     end
 
-    render :action => "index"
+    render action: "index"
   end
 
 private

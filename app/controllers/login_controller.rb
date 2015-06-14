@@ -11,14 +11,14 @@ class LoginController < ApplicationController
 
   def index
     @title = "Login"
-    render :action => "index"
+    render action: "index"
   end
 
   def login
     if params[:email].to_s.match(/@/)
-      user = User.where(:email => params[:email]).first
+      user = User.where(email: params[:email]).first
     else
-      user = User.where(:username => params[:email]).first
+      user = User.where(username: params[:email]).first
     end
 
     if user && user.is_active? &&
@@ -33,7 +33,7 @@ class LoginController < ApplicationController
 
   def forgot_password
     @title = "Reset Password"
-    render :action => "forgot_password"
+    render action: "forgot_password"
   end
 
   def reset_password
@@ -57,7 +57,7 @@ class LoginController < ApplicationController
 
     if (m = params[:token].to_s.match(/^(\d+)-/)) &&
     (Time.now - Time.at(m[1].to_i)) < 24.hours
-      @reset_user = User.where(:password_reset_token => params[:token].to_s).first
+      @reset_user = User.where(password_reset_token: params[:token].to_s).first
     end
 
     if @reset_user
